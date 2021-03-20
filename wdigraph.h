@@ -35,7 +35,7 @@ public:
   }
 
 private:
-  unordered_map<int, unordered_map<int, long long>> cost;
+  unordered_map<int, unordered_map<int, long long> > cost;
 };
 
 #endif
