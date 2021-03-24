@@ -1,3 +1,9 @@
+#include <iostream>
+#include <utility>
+#include "dijkstra.h"
+#include "heap.h"
+#include "wdigraph.h"
+
 void dijkstra(const WDigraph& graph, int startVertex, 
 			  unordered_map<int, PIL>& tree) {
 	/*
@@ -14,19 +20,27 @@ void dijkstra(const WDigraph& graph, int startVertex,
     // say an entry is (v, (u, d)), then there is a fire that started at u
     // and will burn the u->v edge, reaching v at time d
     //list<PIPIL> fires;
-	BinaryHeap fireheap;
+	BinaryHeap<int, long long> heep;
 	
     // at time 0, the startVertex burns, we use -1 to indicate there is
     // no "predecessor" of the startVertex
     //fireheap.insert(PIPIL(startVertex, PIL(-1, 0)));
-	fireheap.insert(startVertex, PIL(-1, 0));
+	heep.insert(startVertex, 0);
     // while there is an active fire
-    while (!fireheap.empty()) {
-		HeapItem<T, K> newitem = min();
-		int v = newitem.item;
-		int u = newitem.key.first;
-		long long d = newitem.key.second;
-		heapfire.popMin();
+    while (heep.size() > 0) {
+		HeapItem<int, long long> node = heep.min();
+		heep.popMin();
+		int u = node.item;
+		long long this_cost = node.key;
+		for (auto it = graph.neighbours(u); it != graph.endIterator(u); it++)
+		{	
+			if (!(tree.find(*it) != tree.end()))
+			{	
+				int cost = this_cost + graph.getCost(u, *it);
+				tree[*it] = {u, cost};
+				heep.insert(*it, cost);
+			}
+		}
         // auto earliestFire = fires.begin();
         // for (auto iter = fires.begin(); iter != fires.end(); ++iter) {
         //     if (iter->second.second < earliestFire->second.second) {
@@ -41,23 +55,6 @@ void dijkstra(const WDigraph& graph, int startVertex,
         // remove this fire
         //fires.erase(earliestFire);
 
-        // if v is already "burned", there nothing to do
-        if (searchTree.find(v) != searchTree.end()) {
-            continue;
-        }
-
-        // declare that v is "burned" at time d with a fire that spawned from u
-        searchTree[v] = PIL(u, d);
-
-        // now start fires from all edges exiting vertex v
-        for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
-            int nbr = *iter;
-
-            // the fire starts at v at time d and will reach nbr
-            // at time d + (length of v->nbr edge)
-            long long burn = d + graph.getCost(v, nbr);
-            fireheap.insert(nbr, PIL(v, burn));
-        }
-    }
+    } 
 
 }

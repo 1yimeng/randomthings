@@ -69,6 +69,12 @@ BinaryHeap<T, K>:: BinaryHeap()
 }
 
 
+template<class T, class K>
+int BinaryHeap<T, K>::size() const
+{
+	return this->heap.size();
+}
+
 template <class T, class K>
 void BinaryHeap<T, K>::insert(const T& item, const K& key)
 {	
