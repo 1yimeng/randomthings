@@ -4,6 +4,8 @@
 #include <cmath>
 #include "wdigraph.h"
 #include "digraph.h"
+#include "heap.h"
+#include "dijkstra.h"
 
 using namespace std;
 
@@ -74,7 +76,15 @@ int main()
 {
 	WDigraph graph;
 	unordered_map<int, Point> points;
-	int count = readGraph(graph, points);
-	cout << graph.size() << endl;
+	string filename = "edmonton-roads-2.0.1.txt";
+	readGraph(filename, graph, points);
+	unordered_map<int, pair<int, long long> > tree;
+	dijkstra(graph, 1, tree);
+	for (auto x: tree)
+	{
+		cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
+	}
+
+
 	return 0;
 }
