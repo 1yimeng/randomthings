@@ -3,8 +3,6 @@
 #include <unordered_map>
 #include <cmath>
 #include <fstream>
-#include <algorithm>
-#include <vector>
 #include "wdigraph.h"
 #include "digraph.h"
 #include "heap.h"
@@ -77,50 +75,45 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	myfile.close();
 }
 
-vector<Point> pathFind(int start, int end, 
-		unordered_map<int, pair<int, long long> >& tree,
-		unordered_map<int, Point>& points)
-{
-	vector<Point> path = {points[end]};
-	int curr_vertex = end;
-	while (curr_vertex != start)
-	{	
-		path.push_back(points[tree[curr_vertex].first]);
-		curr_vertex = tree[curr_vertex].first;
-	}
-	reverse(path.begin(), path.end());
-	return path;
-}
+// vector<Point> pathFind(int start, int end, 
+// 		unordered_map<int, pair<int, long long> >& tree,
+// 		unordered_map<int, Point>& points)
+// {
+// 	vector<Point> path = {points[end]};
+// 	int curr_vertex = end;
+// 	while (curr_vertex != start)
+// 	{	
+// 		path.push_back(points[tree[curr_vertex].first]);
+// 		curr_vertex = tree[curr_vertex].first;
+// 	}
+// 	reverse(path.begin(), path.end());
+// 	return path;
+// }
 
-
-
-
-vector<int> getidentifier(const unordered_map<int, Point>& points) {
-	int lat1, lon1, lat2, lon2;
+vector<int> getidentifiers(const unordered_map<int, Point>& points) {
+	long long lat1, lon1, lat2, lon2;
 	cin >> lat1 >> lon1 >> lat2 >> lon2;
-	Point point1;
-	Point point2;
-	point1.lat = lat1;
-	point1.lon = lon1;
-	point2.lat = lat2;
-	point2.lon = lon2;
-	int identifier1, identifier2;
-	bool result = false;
+	int identifier1 = 0;
+	int identifier2 = 0;
 	vector<int> twoidentifiers;
 	auto it = points.begin();
 	while (it != points.end()) {
 
-		if (it->second == point1) {
+		if (it->second.lat == lat1 && it->second.lon == lon1) {
 			identifier1 = it->first;
 		}
 
-		if (it->second == point2) {
-			identifier2 = it->first;
+		if ((it->second.lat == lat2) && (it->second.lon == lon2)) {
+			identifier2 = it->first;	
+		}
+
+		if (identifier1 != 0 && identifier2 != 0) {
+			break;
 		}
 
 		it++;
 	}
-	twoidentifiers.push_back(identifier1);
+	twoidentifiers.push_back(identifier1);	
 	twoidentifiers.push_back(identifier2);
 	return twoidentifiers;
 }
@@ -129,21 +122,18 @@ int main()
 {
 	WDigraph graph;
 	unordered_map<int, Point> points;
+	//string filename = "edmonton-roads-2.0.1.txt";
 	string filename = "custom-tests/test1";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
-
-	dijkstra(graph, 1, tree);
-	for (auto x: tree)
-	{
-		cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
-	}
+	vector<int> newnew = getidentifiers(points);
+	cout << newnew[0] << newnew[1] << endl;
+	//dijkstra(graph, 1, tree);
+	//for (auto x: tree)
+	//{
+		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
+	//}
 	cout << graph.size() << endl;
 
-	vector<Point> somepath = pathFind(1, 6, tree, points); 
-	for (int i = 0; i < somepath.size(); i++)
-	{
-		cout << somepath[i].lat/100000 << ", " << somepath[i].lon/100000 << endl;
-	}
 	return 0;
 }
