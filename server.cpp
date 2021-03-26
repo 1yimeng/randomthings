@@ -2,11 +2,11 @@
 #include <iostream>
 #include <unordered_map>
 #include <cmath>
+#include <fstream>
 #include "wdigraph.h"
 #include "digraph.h"
 #include "heap.h"
 #include "dijkstra.h"
-
 using namespace std;
 
 struct Point {
@@ -31,6 +31,8 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	graph: an instance of the weighted directed graph (WDigraph) class
 	points: a mapping between vertex identifiers and their coordinates
 	*/
+	ifstream myfile;
+	myfile.open(filename);
 	string newthing;
 	int avertex;
 	int vertex1;
@@ -43,7 +45,7 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	long long lonlong;
 	Point mypoint;
 
-	while (getline(cin, newthing)) {
+	while (getline(myfile, newthing)) {
 		// finding the positions of commas for input
 		second = newthing.find(",", 2);
 		third = newthing.find(",", second + 1);
@@ -69,6 +71,7 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 
 		}
 	}
+	myfile.close();
 }
 
 
@@ -79,12 +82,14 @@ int main()
 	string filename = "edmonton-roads-2.0.1.txt";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
-	dijkstra(graph, 12, tree); 
-	for (auto x: tree)
-	{
-		cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
-	}
 
+
+	//dijkstra(graph, 1, tree);
+	//for (auto x: tree)
+	//{
+		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
+	//}
+	cout << graph.size() << endl;
 
 	return 0;
 }
