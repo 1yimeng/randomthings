@@ -82,6 +82,8 @@ int main()
 	string filename = "edmonton-roads-2.0.1.txt";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
+
+
 	//dijkstra(graph, 1, tree);
 	//for (auto x: tree)
 	//{
