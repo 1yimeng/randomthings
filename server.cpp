@@ -7,6 +7,7 @@
 #include "digraph.h"
 #include "heap.h"
 #include "dijkstra.h"
+#include <vector>
 using namespace std;
 
 struct Point {
@@ -74,6 +75,35 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	myfile.close();
 }
 
+vector<int> getidentifier(const unordered_map<int, Point>& points) {
+	int lat1, lon1, lat2, lon2;
+	cin >> lat1 >> lon1 >> lat2 >> lon2;
+	Point point1;
+	Point point2;
+	point1.lat = lat1;
+	point1.lon = lon1;
+	point2.lat = lat2;
+	point2.lon = lon2;
+	int identifier1, identifier2;
+	bool result = false;
+	vector<int> twoidentifiers;
+	auto it = points.begin();
+	while (it != points.end()) {
+
+		if (it->second == point1) {
+			identifier1 = it->first;
+		}
+
+		if (it->second == point2) {
+			identifier2 = it->first;
+		}
+
+		it++;
+	}
+	twoidentifiers.push_back(identifier1);
+	twoidentifiers.push_back(identifier2);
+	return twoidentifiers;
+}
 
 int main()
 {
@@ -82,11 +112,11 @@ int main()
 	string filename = "edmonton-roads-2.0.1.txt";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
-	//dijkstra(graph, 1, tree);
-	//for (auto x: tree)
-	//{
-		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
-	//}
+	dijkstra(graph, 1, tree);
+	for (auto x: tree)
+	{
+		cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
+	}
 	cout << graph.size() << endl;
 
 	return 0;
