@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <cmath>
 #include <fstream>
+#include <algorithm>
+#include <vector>
 #include "wdigraph.h"
 #include "digraph.h"
 #include "heap.h"
@@ -75,6 +77,24 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	myfile.close();
 }
 
+vector<Point> pathFind(int start, int end, 
+		unordered_map<int, pair<int, long long> >& tree,
+		unordered_map<int, Point>& points)
+{
+	vector<Point> path = {points[end]};
+	int curr_vertex = end;
+	while (curr_vertex != start)
+	{	
+		path.push_back(points[tree[curr_vertex].first]);
+		curr_vertex = tree[curr_vertex].first;
+	}
+	reverse(path.begin(), path.end());
+	return path;
+}
+
+
+
+
 vector<int> getidentifier(const unordered_map<int, Point>& points) {
 	int lat1, lon1, lat2, lon2;
 	cin >> lat1 >> lon1 >> lat2 >> lon2;
@@ -109,25 +129,21 @@ int main()
 {
 	WDigraph graph;
 	unordered_map<int, Point> points;
-	string filename = "edmonton-roads-2.0.1.txt";
+	string filename = "custom-tests/test1";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
-<<<<<<< HEAD
+
 	dijkstra(graph, 1, tree);
 	for (auto x: tree)
 	{
 		cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
 	}
-=======
-
-
-	//dijkstra(graph, 1, tree);
-	//for (auto x: tree)
-	//{
-		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
-	//}
->>>>>>> 01011b24f142da4e2b0904ef955c3fd3711c1738
 	cout << graph.size() << endl;
 
+	vector<Point> somepath = pathFind(1, 6, tree, points); 
+	for (int i = 0; i < somepath.size(); i++)
+	{
+		cout << somepath[i].lat/100000 << ", " << somepath[i].lon/100000 << endl;
+	}
 	return 0;
 }
