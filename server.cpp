@@ -112,11 +112,21 @@ int main()
 	string filename = "edmonton-roads-2.0.1.txt";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
+<<<<<<< HEAD
 	dijkstra(graph, 1, tree);
 	for (auto x: tree)
 	{
 		cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
 	}
+=======
+
+
+	//dijkstra(graph, 1, tree);
+	//for (auto x: tree)
+	//{
+		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
+	//}
+>>>>>>> 01011b24f142da4e2b0904ef955c3fd3711c1738
 	cout << graph.size() << endl;
 
 	return 0;

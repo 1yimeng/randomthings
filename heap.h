@@ -30,12 +30,6 @@ public:
   // returns the number of items held in the heap
   int size() const;
 
-
-  // Put here by zony. This print function should be removed
-  // before submission. Helps debug heap by printing all elements
-  void print();
-  // remove this constructor as well when done;
-  BinaryHeap();
 private:
   // the array holding the heap
   std::vector< HeapItem<T, K> > heap;
@@ -48,25 +42,6 @@ private:
   void fixHeapDown(int i);
 };
 
-
-// Put here by zony. This print function should be removed
-// before submission. Helps debug heap by printing all elements
-template <class T, class K>
-void BinaryHeap<T, K>::print()
-{
-	for (int i = 0; i < this->heap.size(); i++)
-	{
-		cout << "(" << this->heap[i].item << ", ";
-		cout << this->heap[i].key << ")" << endl;
-	}
-}
-
-// Remove constructor when done
-template <class T, class K>
-BinaryHeap<T, K>:: BinaryHeap()
-{
-	this->heap = {};
-}
 
 
 template<class T, class K>
@@ -84,7 +59,6 @@ void BinaryHeap<T, K>::insert(const T& item, const K& key)
 	this->heap.push_back(element);
 	int idx = this->heap.size()-1;
 	this->fixHeapUp(idx);
-	cout << "insert size: " << this->heap.size() << endl; 
 }
 
 template <class T, class K>
@@ -106,7 +80,6 @@ void BinaryHeap<T, K>::fixHeapUp(int i)
 template <class T, class K>
 void BinaryHeap<T, K>::popMin()
 {
-	cout << "Pop min size: " << this->heap.size() << endl;
 	int idx = this->heap.size()-1;
 	if (this->heap.size() > 0)
 	{
