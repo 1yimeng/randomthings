@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <fstream>
+#include <algorithm>
 #include "wdigraph.h"
 #include "digraph.h"
 #include "heap.h"
@@ -75,20 +76,31 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	myfile.close();
 }
 
-// vector<Point> pathFind(int start, int end, 
-// 		unordered_map<int, pair<int, long long> >& tree,
-// 		unordered_map<int, Point>& points)
-// {
-// 	vector<Point> path = {points[end]};
-// 	int curr_vertex = end;
-// 	while (curr_vertex != start)
-// 	{	
-// 		path.push_back(points[tree[curr_vertex].first]);
-// 		curr_vertex = tree[curr_vertex].first;
-// 	}
-// 	reverse(path.begin(), path.end());
-// 	return path;
-// }
+vector<Point> pathFind(int start, int end, 
+ 		unordered_map<int, pair<int, long long> >& tree,
+ 		unordered_map<int, Point>& points)
+{
+ 	vector<Point> path = {points[end]};
+ 	int curr_vertex = end;
+	
+ 	while (curr_vertex != start)
+ 	{
+		bool not_in_tree = !(tree.find(curr_vertex) != tree.end());
+		bool not_in_points = !(points.find(tree[curr_vertex].first) != points.end());
+		if (not_in_tree || not_in_points)
+		{	
+			path = {};
+			break;
+		}
+ 		path.push_back(points[tree[curr_vertex].first]);
+ 		curr_vertex = tree[curr_vertex].first;
+ 	}
+	if (path.size() > 1)
+	{
+ 		reverse(path.begin(), path.end());
+	}
+	return path;
+}
 
 vector<int> getidentifiers(const unordered_map<int, Point>& points) {
 	long long lat1, lon1, lat2, lon2;
@@ -122,18 +134,47 @@ int main()
 {
 	WDigraph graph;
 	unordered_map<int, Point> points;
-	//string filename = "edmonton-roads-2.0.1.txt";
-	string filename = "custom-tests/test1";
+	// string filename = "edmonton-roads-2.0.1.txt";
+	string filename = "custom-tests/test2";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
-	vector<int> newnew = getidentifiers(points);
-	cout << newnew[0] << newnew[1] << endl;
+	
+	char command;
+	int i = 0;
+	vector<Point> path;
+	while (true)
+	{
+		cin >> command;
+		if (command == 'R')
+		{
+			vector<int> IDs = getidentifiers(points);
+			tree = {};
+			dijkstra(graph, IDs[0], tree);
+			path = pathFind(IDs[0], IDs[1], tree, points);
+			cout << "N " << path.size() << endl;
+		}
+		if (command == 'A')
+		{
+			if (i != path.size())
+			{
+				cout << "W " << path[i].lat << " ";
+				cout << path[i].lon << endl;
+				i++;
+			} else
+			{
+				cout << "E" << endl;
+				break;
+			}
+		}
+
+	}
+
+
 	//dijkstra(graph, 1, tree);
 	//for (auto x: tree)
 	//{
 		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
 	//}
-	cout << graph.size() << endl;
-
+	
 	return 0;
 }
