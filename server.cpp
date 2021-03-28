@@ -80,7 +80,8 @@ vector<Point> pathFind(int start, int end,
  		unordered_map<int, pair<int, long long> >& tree,
  		unordered_map<int, Point>& points)
 {
- 	vector<Point> path = {points[end]};
+ 	vector<Point> path;
+	path.push_back(points[end]);
  	int curr_vertex = end;
 	
  	while (curr_vertex != start)
@@ -89,7 +90,7 @@ vector<Point> pathFind(int start, int end,
 		bool not_in_points = !(points.find(tree[curr_vertex].first) != points.end());
 		if (not_in_tree || not_in_points)
 		{	
-			path = {};
+			path.clear();
 			break;
 		}
  		path.push_back(points[tree[curr_vertex].first]);
@@ -107,20 +108,26 @@ vector<int> getidentifiers(const unordered_map<int, Point>& points) {
 	cin >> lat1 >> lon1 >> lat2 >> lon2;
 	int identifier1 = 0;
 	int identifier2 = 0;
+	Point point1;
+	Point point2;
+	point1.lat = lat1;
+	point1.lon = lon1;
+	point2.lat = lat2;
+	point2.lon = lon2;
 	vector<int> twoidentifiers;
+	long long distance1, distance2;
+	distance1 = 5000000000;
+	distance2 = 5000000000;
 	auto it = points.begin();
 	while (it != points.end()) {
-
-		if (it->second.lat == lat1 && it->second.lon == lon1) {
+		if (distance1 > mahanttan(point1, it->second)) {
+			distance1 = mahanttan(point1, it->second);
 			identifier1 = it->first;
 		}
 
-		if ((it->second.lat == lat2) && (it->second.lon == lon2)) {
+		if (distance2 > mahanttan(point2, it->second)) {
+			distance2 = mahanttan(point2, it->second);
 			identifier2 = it->first;	
-		}
-
-		if (identifier1 != 0 && identifier2 != 0) {
-			break;
 		}
 
 		it++;
@@ -134,10 +141,7 @@ int main()
 {
 	WDigraph graph;
 	unordered_map<int, Point> points;
-	// string filename = "edmonton-roads-2.0.1.txt";
-	cout << "Enter filename that has coordinates: ";
-	string filename;
-	getline(cin, filename);
+	string filename = "edmonton-roads-2.0.1.txt";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
 	
@@ -150,7 +154,8 @@ int main()
 		if (command == 'R')
 		{
 			vector<int> IDs = getidentifiers(points);
-			tree = {};
+			tree.clear();
+			cout << IDs[0] << IDs[1] << endl;
 			dijkstra(graph, IDs[0], tree);
 			path = pathFind(IDs[0], IDs[1], tree, points);
 			cout << "N " << path.size() << endl;
