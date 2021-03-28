@@ -17,31 +17,41 @@ struct Point {
 };
 
 long long mahanttan(const Point& pt1, const Point& pt2) {
-	// Return the Manhattan distance between the two given points
-	long long distance = abs(pt1.lon - pt2.lon) + abs(pt1.lat - pt2.lat);
+	/*
+	This function calculates the distance between two points 
+	using the mahanttan distance calculation mathod
 	
-	//long long distance = sqrt((pt1.lon - pt2.lon)*(pt1.lon-pt2.lon) + (pt1.lat-pt2.lat)*(pt1.lat-pt2.lat));
+	Argument: pt1 (type: Point), pt2 (type: Point)
+	Return: the Manhattan distance between the two given points (type: long long)
+	*/
+	long long distance = abs(pt1.lon - pt2.lon) + abs(pt1.lat - pt2.lat);
+
 	return distance;
 }
 
 void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) {
 	/*
-	Read the Edmonton map data from the provided file
+	This funciton read the Edmonton map data from the provided file
 	and load it into the given WDigraph object.
 	Store vertex coordinates in Point struct and map
 	each vertex to its corresponding Point struct.
-	PARAMETERS:
+	
+	Argument:
 	filename: name of the file describing a road network
 	graph: an instance of the weighted directed graph (WDigraph) class
 	points: a mapping between vertex identifiers and their coordinates
+
+	Return: none
 	*/
+
+	// opening the file
 	ifstream myfile;
 	myfile.open(filename);
 	string newthing;
 	int avertex;
 	int vertex1;
 	int vertex2;
-	int second = 0;
+	int second = 0; 
 	int third = 0;
 	double lat;
 	double lon;
@@ -49,13 +59,15 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 	long long lonlong;
 	Point mypoint;
 
-	while (getline(myfile, newthing)) {
+	while (getline(myfile, newthing)) 
+	{
 		// finding the positions of commas for input
 		second = newthing.find(",", 2);
 		third = newthing.find(",", second + 1);
 		
 		// add vertices or edge to Digraph depending on the input
-		if (newthing[0] == 'V') {
+		if (newthing[0] == 'V') 
+		{
 			
 			avertex = stoi(newthing.substr(2, second - 2));
 			lat = stod(newthing.substr(second + 1, third - second - 1));
@@ -65,9 +77,12 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 			lonlong = static_cast <long long> (lon * 100000);
 			mypoint.lat = latlong;
 			mypoint.lon = lonlong;
-			points[avertex] = mypoint;
+			// adding the point to the unordered map to keep track of
+			// the corresponding location index
+			points[avertex] = mypoint; 
 
-		} else if (newthing[0] == 'E') {
+		} else if (newthing[0] == 'E') 
+		{
 			
 			vertex1 = stoi(newthing.substr(2, second - 2));
 			vertex2 = stoi(newthing.substr(second + 1, third - second - 1));
@@ -97,6 +112,7 @@ vector<Point> pathFind(int start, int end,
 	// start with the end point in the vector
  	vector<Point> path = {points[end]};
  	int curr_vertex = end;
+
 	// while current vertex is not start
  	while (curr_vertex != start)
  	{
@@ -104,7 +120,7 @@ vector<Point> pathFind(int start, int end,
 		bool not_in_points = !(points.find(tree[curr_vertex].first) != points.end());
 		if (not_in_tree || not_in_points)
 		{	
-			path = {};
+			path.clear();
 			break;
 		}
 		// finds the preceding vertex and adds to vector
@@ -119,25 +135,46 @@ vector<Point> pathFind(int start, int end,
 	return path;
 }
 
-vector<int> getidentifiers(const unordered_map<int, Point>& points) {
+vector<int> getidentifiers(const unordered_map<int, Point>& points) 
+{
+	/*
+	This function obtains the closest point index to the point inputed.
+
+	Argument: points (unordered_map<int, Point>)
+	
+	Return: a vector that has the location index in sorted order
+	*/
 	long long lat1, lon1, lat2, lon2;
 	cin >> lat1 >> lon1 >> lat2 >> lon2;
 	int identifier1 = 0;
 	int identifier2 = 0;
+	Point point1;
+	Point point2;
+	point1.lat = lat1;
+	point1.lon = lon1;
+	point2.lat = lat2;
+	point2.lon = lon2;
 	vector<int> twoidentifiers;
+	long long distance1, distance2;
+	distance1 = 5000000000;
+	distance2 = 5000000000;
 	auto it = points.begin();
-	while (it != points.end()) {
-
-		if (abs(it->second.lat - lat1) <= 4 && abs(it->second.lon - lon1) <= 4) {
+	while (it != points.end()) 
+	{
+		if (distance1 > mahanttan(point1, it->second))
+		{
+			// if the distance is smaller than before
+			// update the distance and identifer index
+			distance1 = mahanttan(point1, it->second);
 			identifier1 = it->first;
 		}
 
-		if (abs(it->second.lat - lat2) <= 4 && abs(it->second.lon - lon2) <= 4) {
+		if (distance2 > mahanttan(point2, it->second)) 
+		{
+			// if the distance is smaller than before
+			// update the distance and identifer index
+			distance2 = mahanttan(point2, it->second);
 			identifier2 = it->first;	
-		}
-
-		if (identifier1 != 0 && identifier2 != 0) {
-			break;
 		}
 
 		it++;
@@ -152,31 +189,39 @@ int main()
 	WDigraph graph;
 	unordered_map<int, Point> points;
 	string filename = "edmonton-roads-2.0.1.txt";
-	//string filename = "custom-tests/test2";
+	// taking in the input by reading the file
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
 	
 	char command;
 	int i = 0;
 	vector<Point> path;
+	
 	while (true)
 	{
 		cin >> command;
+		// taking in the coordinates of two points
+		// and finding the path between them
 		if (command == 'R')
 		{
 			vector<int> IDs = getidentifiers(points);
-			tree = {};
+			tree.clear();
 			dijkstra(graph, IDs[0], tree);
 			path = pathFind(IDs[0], IDs[1], tree, points);
 			cout << "N " << path.size() << endl;
 		}
+
 		if (command == 'A')
-		{
+		{	
+			// if input is "W", the program will print the path's
+			// coordinates
 			if (i != path.size())
 			{
 				cout << "W " << path[i].lat << " ";
 				cout << path[i].lon << endl;
 				i++;
+
+			// input "E" ends the program
 			} else
 			{
 				cout << "E" << endl;
@@ -185,13 +230,6 @@ int main()
 		}
 
 	}
-
-
-	//dijkstra(graph, 1, tree);
-	//for (auto x: tree)
-	//{
-		//cout << x.first << ", " << x.second.first << ", " << x.second.second << endl;
-	//}
 	
 	return 0;
 }
