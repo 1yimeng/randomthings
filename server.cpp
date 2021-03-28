@@ -137,7 +137,7 @@ int main()
 	WDigraph graph;
 	unordered_map<int, Point> points;
 	string filename = "edmonton-roads-2.0.1.txt";
-	//string filename = "custom-tests/test3";
+	//string filename = "custom-tests/test2";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
 	
