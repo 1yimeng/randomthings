@@ -113,11 +113,11 @@ vector<int> getidentifiers(const unordered_map<int, Point>& points) {
 	auto it = points.begin();
 	while (it != points.end()) {
 
-		if (it->second.lat == lat1 && it->second.lon == lon1) {
+		if (abs(it->second.lat - lat1) <= 4 && abs(it->second.lon - lon1) <= 4) {
 			identifier1 = it->first;
 		}
 
-		if ((it->second.lat == lat2) && (it->second.lon == lon2)) {
+		if (abs(it->second.lat - lat2) <= 4 && abs(it->second.lon - lon2) <= 4) {
 			identifier2 = it->first;	
 		}
 
