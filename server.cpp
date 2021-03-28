@@ -19,6 +19,8 @@ struct Point {
 long long mahanttan(const Point& pt1, const Point& pt2) {
 	// Return the Manhattan distance between the two given points
 	long long distance = abs(pt1.lon - pt2.lon) + abs(pt1.lat - pt2.lat);
+	
+	//long long distance = sqrt((pt1.lon - pt2.lon)*(pt1.lon-pt2.lon) + (pt1.lat-pt2.lat)*(pt1.lat-pt2.lat));
 	return distance;
 }
 
@@ -134,10 +136,8 @@ int main()
 {
 	WDigraph graph;
 	unordered_map<int, Point> points;
-	// string filename = "edmonton-roads-2.0.1.txt";
-	cout << "Enter filename that has coordinates: ";
-	string filename;
-	getline(cin, filename);
+	string filename = "edmonton-roads-2.0.1.txt";
+	//string filename = "custom-tests/test2";
 	readGraph(filename, graph, points);
 	unordered_map<int, pair<int, long long> > tree;
 	
