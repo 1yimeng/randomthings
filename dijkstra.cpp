@@ -20,27 +20,29 @@ void dijkstra(const WDigraph& graph, int startVertex,
     // say an entry is (v, (u, d)), then there is a fire that started at u
     // and will burn the u->v edge, reaching v at time d
     //list<PIPIL> fires;
-	BinaryHeap<int, long long> heep;
+	BinaryHeap<pair<int, int>, long long> heep;
 	
     // at time 0, the startVertex burns, we use -1 to indicate there is
     // no "predecessor" of the startVertex
     //fireheap.insert(PIPIL(startVertex, PIL(-1, 0)));
-	heep.insert(startVertex, 0);
+	heep.insert({startVertex, startVertex}, 0);
     // while there is an active fire
+    int prev = startVertex;
     while (heep.size() > 0) {
-		HeapItem<int, long long> node = heep.min();
-		heep.popMin();
-		int u = node.item;
-		long long this_cost = node.key;
-		for (auto it = graph.neighbours(u); it != graph.endIterator(u); it++)
+	HeapItem<pair<int, int> , long long> node = heep.min();
+	int u = node.item.first;
+	int v = node.item.second;
+	long long this_cost = node.key;
+		
+	if (!(tree.find(v) != tree.end()))
+	{
+		tree[v] = {u, this_cost};
+		for (auto it = graph.neighbours(v); it != graph.endIterator(v); it++)
 		{	
-			if (!(tree.find(*it) != tree.end()))
-			{	
-				int cost = this_cost + graph.getCost(u, *it);
-				tree[*it] = {u, cost};
-				heep.insert(*it, cost);
-			}
+			long long cost = this_cost + graph.getCost(v, *it);
+			heep.insert({v,*it}, cost);
 		}
+	}	
         // auto earliestFire = fires.begin();
         // for (auto iter = fires.begin(); iter != fires.end(); ++iter) {
         //     if (iter->second.second < earliestFire->second.second) {
@@ -55,6 +57,7 @@ void dijkstra(const WDigraph& graph, int startVertex,
         // remove this fire
         //fires.erase(earliestFire);
 
+		heep.popMin();
     } 
 
 }
